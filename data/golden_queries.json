@@ -1,0 +1,134 @@
+[
+  {
+    "query": "data science jobs",
+    "expected_top_ids": [
+      "oraclecloud___ebwh.fa.us2___83629",
+      "grnhse___duettoresearch___7585844",
+      "smartrecruiters___visa___2aa26391-467c-4fdc-94c7-e0ccddd56d2e",
+      "grnhse___omgushs___5041410007",
+      "grnhse___omgushs___5041412007"
+    ],
+    "notes": "baseline DS query"
+  },
+  {
+    "query": "senior ML engineer",
+    "expected_top_ids": [
+      "grnhse___sumologic___7584291",
+      "utipro___spa1004aura___93330e50-7b3a-4ba8-94f2-6f32360aa4e1___826ec1a3-7b1b-4d3b-b6f5-1d91e1ef3067",
+      "utipro___spa1004aura___d669a837-e9d7-434e-b510-5227974b67b0___826ec1a3-7b1b-4d3b-b6f5-1d91e1ef3067",
+      "utipro___scr1003tsri___98759e7d-7ede-4c0b-ac7b-2c6293c7b522___84056ddc-527e-4308-9c3f-f8b9ed9e7fee",
+      "successfactors___eu___abbemobili___1163137855"
+    ],
+    "notes": "seniority + ML"
+  },
+  {
+    "query": "mlops engineer",
+    "expected_top_ids": [
+      "oraclecloud___jpmc.fa___210708758",
+      "grnhse___sumologic___7584291",
+      "paylocity___27d4ca3b-9889-4ede-86a9-59181bb27983___3890328",
+      "utipro___col1030cwf___5f559c8a-4ac3-4464-941d-77a43783bd51___1453f22c-0107-4991-ae01-0baf2971afd8",
+      "utipro___col1030cwf___d1d83d8e-bd7f-41c5-ac90-f1b4796fa63f___1453f22c-0107-4991-ae01-0baf2971afd8"
+    ],
+    "notes": "near-miss ops roles"
+  },
+  {
+    "query": "product manager",
+    "expected_top_ids": [
+      "smartrecruiters___intuitive___48860fdf-e117-437d-bf54-15201ab53d37",
+      "rippling___sketchy___722dc622-7257-442c-a99f-f2091d15f3bf",
+      "utipro___lub1000lubt___287e5d40-e2cb-41a7-8c5d-756dc9c5a838___692f75fa-8386-4d72-8a06-697a340c98da",
+      "oraclecloud___hbbq.fa.us2___3933",
+      "grnhse___coinbase___3581465"
+    ],
+    "notes": "PM query"
+  },
+  {
+    "query": "business analyst",
+    "expected_top_ids": [
+      "oraclecloud___ibtcjb.fa.ocs___41622",
+      "oraclecloud___hcib.fa.us2___14587",
+      "adprecruiting___winwastejobs___5001176638506",
+      "adp___779e6012-26df-4c72-b6e4-b191845f9776___544812",
+      "oraclecloud___ibtcjb.fa.ocs___41623"
+    ],
+    "notes": "BA query"
+  },
+  {
+    "query": "product owner remote",
+    "expected_top_ids": [
+      "oraclecloud___ebxr.fa.us2___212534",
+      "adprecruiting___symetraexternal___5001175629306",
+      "smartrecruiters___risanthealth___8b17f339-4a60-4e22-b1f8-0ad38569699b",
+      "ashby___wealth-com___3092a234-eb2f-464b-b399-993fdcd59097",
+      "grnhse___coinbase___7170410"
+    ],
+    "notes": "PM + remote"
+  },
+  {
+    "query": "remote python developer",
+    "expected_top_ids": [
+      "adprecruiting___associated___5001177120300",
+      "adp___4ec7d764-e132-48cb-9038-9df9bc7a1ef5___514328",
+      "utipro___bun1000bunzl___e6decf20-c86a-432d-8796-d23e69732c85___2a636813-b4c0-4286-b562-a0e56f073596",
+      "successfactors___eu___capgemitecP3___1290012701",
+      "utipro___one1004oneb___72fdae0d-0544-4d81-ae26-562ccfcb8266___aedeff9e-d9a2-4774-978a-c7dc10c70120"
+    ],
+    "notes": "engineering + remote"
+  },
+  {
+    "query": "nonprofit climate impact jobs",
+    "expected_top_ids": [
+      "pinpoint_tpin_161199",
+      "grnhse___pursuit___7569530",
+      "taleo_careersection_uofmo_26000246",
+      "adp___0b82e50a-f910-433b-b61f-f6d52dd6b27c___930782",
+      "taleo_careersection_bswhealth_26002184"
+    ],
+    "notes": "mission query"
+  },
+  {
+    "query": "mission-driven data scientist",
+    "expected_top_ids": [
+      "grnhse___twitch___8401220002",
+      "grnhse___horacemannservicecorporation___5780222004",
+      "grnhse___inovalon___7026096003",
+      "grnhse___lyft___8401222002",
+      "ashby___equip___f6e3c66b-0b7d-43fd-8370-d522e0e0df06"
+    ],
+    "notes": "mission + DS"
+  },
+  {
+    "query": "electrician apprentice",
+    "expected_top_ids": [
+      "workable___central_moloney___303AB42F11",
+      "oraclecloud___ekcm.fa.us6___413387",
+      "adp___5cd5c82a-9265-495c-8abc-b4756df8f809___533393",
+      "utipro___teaminc___TEA1500TEMI___a9bd01f6-f049-4ffa-851b-ec1d06dc206a___de31516c-007e-4e8c-acb5-c93adda4c8f8",
+      "jobvite___hearthnhome-internal___oikxzfws"
+    ],
+    "notes": "near-miss trade"
+  },
+  {
+    "query": "registered nurse",
+    "expected_top_ids": [
+      "utipro___pipeline___PIP1500PPLN___6f7ab1ef-c144-434e-9256-4926c1f4006c___99cc9843-69bc-4d2d-9114-d5358004a818",
+      "taleo_careersection_tuhs_260587",
+      "successfactors___com___dukeuniverP1___1361569800",
+      "successfactors___com___dukeuniverP1___1361544400",
+      "utipro___val1004vvh___7a5186be-89cf-4eb5-b2e5-869118e3e2f0___379f29fa-cf48-4306-bd10-1167a7e559f9"
+    ],
+    "notes": "near-miss healthcare"
+  },
+  {
+    "query": "warehouse associate",
+    "expected_top_ids": [
+      "paylocity___4c48befc-5b11-4699-b3cd-0e495094242b___3887878",
+      "smartrecruiters___thetileshop1___012e4fbe-6d2d-46f9-a642-3d2fd97773fb",
+      "adprecruiting___capstonecareersite___5001177222000",
+      "adprecruiting___raymourotp___5001177151400",
+      "adprecruiting___capstonecareersite___5001177043600"
+    ],
+    "notes": "near-miss ops"
+  }
+]

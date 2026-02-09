@@ -18,15 +18,15 @@ def _make_engine(tmp_path, dim=3):
         "company": np.zeros((1, dim), dtype=np.float32),
         "_normalized": True,
     }
-    engine = JobSearchEngine(jobs=[{"_meta": {}}], embeddings=embeddings)
-    engine._embedding_dim = dim
-    engine._query_cache = QueryEmbeddingCache(
-        max_size=engine._query_cache.max_size,
+    query_cache = QueryEmbeddingCache(
+        max_size=500,
         path=str(tmp_path / "query_vec_cache.pkl"),
         enable_disk=query_cache_write(),
         embedding_dim=dim,
         debug=False,
     )
+    engine = JobSearchEngine(jobs=[{"_meta": {}}], embeddings=embeddings, query_cache=query_cache)
+    engine._embedding_dim = dim
     engine._prewarm_write = query_cache_prewarm_write()
     engine._prewarm_keys = set()
     engine._prewarm_cache = {}

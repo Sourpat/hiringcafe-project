@@ -3,6 +3,7 @@ import numpy as np
 
 from src.data_loader import JobDataLoader
 from src.search_engine import JobSearchEngine
+from src.query_cache import QueryEmbeddingCache
 
 
 def _tokenize(text):
@@ -31,7 +32,14 @@ def _load_engine():
     loader.load(fast_demo=True, fast_n=int(os.getenv("FAST_DEMO_N", "20000")))
     jobs = loader.get_jobs()
     embeddings = loader.get_embeddings()
-    return JobSearchEngine(jobs, embeddings, debug_cache=False, emoji_ok=False)
+    query_cache = QueryEmbeddingCache(
+        max_size=500,
+        path="data/query_vec_cache.pkl",
+        enable_disk=False,
+        embedding_dim=1536,
+        debug=False,
+    )
+    return JobSearchEngine(jobs, embeddings, debug_cache=False, emoji_ok=False, query_cache=query_cache)
 
 
 def _top_titles(engine, query, top_k=10):

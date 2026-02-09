@@ -5,6 +5,8 @@ import argparse
 import os
 import sys
 import time
+import json
+from datetime import datetime, timezone
 import numpy as np
 from contextlib import contextmanager
 
@@ -16,6 +18,7 @@ from src.data_loader import JobDataLoader
 from src.search_engine import JobSearchEngine
 from src.context import SearchContext
 from src.token_tracker import tracker
+from src.query_cache import QueryEmbeddingCache, query_cache_max, query_cache_path, query_cache_write
 
 EMOJI_OK = True
 DEFAULT_PREWARM_QUERIES = [
@@ -50,6 +53,30 @@ def env_int(name, default):
     except ValueError:
         return default
 
+def build_query_cache(debug=False):
+    return QueryEmbeddingCache(
+        max_size=query_cache_max(),
+        path=query_cache_path(),
+        enable_disk=query_cache_write(),
+        embedding_dim=1536,
+        debug=debug,
+    )
+
+def truncate_text(value, limit=120):
+    if value is None:
+        return ""
+    text = str(value)
+    if len(text) <= limit:
+        return text
+    return text[: limit - 3] + "..."
+
+def write_trace(path, record):
+    dir_path = os.path.dirname(path)
+    if dir_path:
+        os.makedirs(dir_path, exist_ok=True)
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
 @contextmanager
 def time_block(label):
     start = time.perf_counter()
@@ -81,9 +108,15 @@ def main():
     parser.add_argument("--stress-n", type=int, default=12, help="Number of stress queries")
     parser.add_argument("--print-cache-keys", action="store_true", help="Print query cache keys (MRU->LRU)")
     parser.add_argument("--debug-cache", action="store_true", help="Print query cache debug per query")
+    parser.add_argument("--explain", action="store_true", help="Explain why results ranked this way")
+    parser.add_argument("--trace-out", type=str, default=None, help="Write JSONL trace output to a file")
     args = parser.parse_args()
 
-    if args.offline:
+    # Offline can be enabled either by CLI flag or env var.
+    offline_env = env_bool("OFFLINE_MODE", default=False)
+    offline_enabled = bool(args.offline or offline_env)
+
+    if offline_enabled:
         os.environ["OFFLINE_MODE"] = "1"
         if os.getenv("QUERY_CACHE_PREWARM") is None:
             os.environ["QUERY_CACHE_PREWARM"] = "1"
@@ -93,6 +126,7 @@ def main():
             os.environ["QUERY_CACHE_WRITE"] = "0"
         print("OFFLINE MODE ENABLED")
     else:
+        os.environ.pop("OFFLINE_MODE", None)
         print("ONLINE MODE ENABLED")
         api_key = (
             os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_KEY") or ""
@@ -137,6 +171,9 @@ def main():
         f"cache_path={cache_abs_path}"
     )
 
+    # Create a single cache instance for the whole run (required).
+    query_cache = build_query_cache(debug=args.debug_cache)
+
     if args.reset_cache:
         try:
             os.remove(os.path.join("data", "query_vec_cache.pkl"))
@@ -177,13 +214,67 @@ def main():
     if is_mmap or (isinstance(embeddings, dict) and embeddings.get("_normalized") is True):
         print("embeddings matrix: reused (mmap)")
         with time_block("build embeddings matrix"):
-            search_engine = JobSearchEngine(jobs, embeddings, debug_cache=args.debug_cache, emoji_ok=EMOJI_OK)
+            search_engine = JobSearchEngine(
+                jobs,
+                embeddings,
+                debug_cache=args.debug_cache,
+                emoji_ok=EMOJI_OK,
+                explain=args.explain,
+                query_cache=query_cache,
+            )
     else:
         with time_block("build embeddings matrix"):
-            search_engine = JobSearchEngine(jobs, embeddings, debug_cache=args.debug_cache, emoji_ok=EMOJI_OK)
+            search_engine = JobSearchEngine(
+                jobs,
+                embeddings,
+                debug_cache=args.debug_cache,
+                emoji_ok=EMOJI_OK,
+                explain=args.explain,
+                query_cache=query_cache,
+            )
     cache_exists = os.path.exists(cache_abs_path)
     cache_size = os.path.getsize(cache_abs_path) if cache_exists else None
     print(f"Cache file exists={cache_exists}, size={cache_size}")
+
+    def emit_trace(query, results):
+        if not args.trace_out:
+            return
+        stats = getattr(search_engine, "last_search_stats", {}) or {}
+        cache_stats = search_engine.get_query_cache_stats()
+        mode = "offline" if os.getenv("OFFLINE_MODE") == "1" else "online"
+        top_results = []
+        for i, job in enumerate(results[:10], start=1):
+            meta = job.get("_meta", {}) or {}
+            title = truncate_text(meta.get("title") or job.get("title"))
+            company = truncate_text(meta.get("company") or job.get("company"))
+            workplace = truncate_text(meta.get("workplace_type") or job.get("workplace_type"))
+            location = truncate_text(meta.get("location") or job.get("location"))
+            entry = {
+                "rank": i,
+                "title": title,
+                "company": company,
+                "workplace": workplace,
+                "location": location,
+            }
+            if args.explain:
+                entry["explain"] = meta.get("_score_debug", {})
+            top_results.append(entry)
+        record = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "mode": mode,
+            "query": truncate_text(query, 200),
+            "cache_hit": stats.get("embed_cache_hit"),
+            "cache_source": stats.get("embed_source"),
+            "timings": {
+                "embed": stats.get("t_embed_s"),
+                "vector": stats.get("t_vector_s"),
+                "rerank": stats.get("t_lexical_s"),
+                "format": stats.get("t_format_s"),
+            },
+            "cache_stats": cache_stats,
+            "top_results": top_results,
+        }
+        write_trace(args.trace_out, record)
     
     # Test queries
     print("\n" + "="*70)
@@ -241,6 +332,7 @@ def main():
             results = search_engine.search(query, top_k=results_per_query)
             search_engine.print_results(results)
             print()
+        emit_trace(query, results)
         stats = getattr(search_engine, "last_search_stats", {}) or {}
         if stats:
             print(f"candidates_k used: {stats.get('candidates_k')}")
@@ -292,7 +384,7 @@ def main():
         print("Query cache keys (MRU -> LRU):")
         for k in search_engine.get_query_cache_keys_mru():
             print(f"  {k}")
-    
+
     # Test multi-turn refinement
     print("\n" + "="*70)
     print("MULTI-TURN REFINEMENT EXAMPLE")
@@ -309,6 +401,7 @@ def main():
     with time_block("refine: turn 1"):
         results = context.refine("data science jobs")
         search_engine.print_results(results)
+    emit_trace("data science jobs", results)
     stats = getattr(search_engine, "last_search_stats", {}) or {}
     if stats:
         print(f"candidates_k used: {stats.get('candidates_k')}")
@@ -324,6 +417,7 @@ def main():
     with time_block("refine: turn 2"):
         results = context.refine("at non-profits or companies focused on social impact")
         search_engine.print_results(results)
+    emit_trace("at non-profits or companies focused on social impact", results)
     stats = getattr(search_engine, "last_search_stats", {}) or {}
     if stats:
         print(f"candidates_k used: {stats.get('candidates_k')}")
@@ -340,6 +434,7 @@ def main():
         with time_block("refine: turn 3"):
             results = context.refine("remote only")
             search_engine.print_results(results)
+        emit_trace("remote only", results)
         stats = getattr(search_engine, "last_search_stats", {}) or {}
         if stats:
             print(f"candidates_k used: {stats.get('candidates_k')}")

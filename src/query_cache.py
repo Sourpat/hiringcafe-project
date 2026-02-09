@@ -35,11 +35,27 @@ def normalize_query_key(q):
     return " ".join(q.strip().lower().split())
 
 
+def should_log_cache_debug():
+    return os.getenv("DEBUG_CACHE") == "1" and os.getenv("PYTEST_CURRENT_TEST") is None
+
+
 class QueryEmbeddingCache:
-    def __init__(self, max_size, path, enable_disk, embedding_dim=1536, debug=False):
-        self.max_size = max_size
-        self.path = path
-        self.enable_disk = enable_disk
+    def __init__(
+        self,
+        max_size=None,
+        path=None,
+        enable_disk=None,
+        embedding_dim=1536,
+        debug=False,
+    ):
+        """
+        Product-grade query embedding cache.
+
+        Backward compatible with existing env-driven defaults.
+        """
+        self.max_size = int(max_size) if max_size is not None else int(query_cache_max())
+        self.path = path or query_cache_path()
+        self.enable_disk = bool(enable_disk) if enable_disk is not None else False
         self.embedding_dim = embedding_dim
         self.debug = debug
         self._store = OrderedDict()
@@ -66,9 +82,10 @@ class QueryEmbeddingCache:
                     items = items[-self.max_size:]
                 self._store = OrderedDict()
                 for k, v in items:
+                    key = normalize_query_key(str(k))
                     vec = np.asarray(v, dtype=np.float32)
                     if vec.shape == (self.embedding_dim,):
-                        self._store[k] = vec
+                        self._store[key] = vec
                 self._disk_keys = set(self._store.keys())
                 if trimmed_on_load:
                     self.save()
@@ -91,28 +108,39 @@ class QueryEmbeddingCache:
         self._loaded = True
         assert len(self._store) <= self.max_size
 
-    def get(self, key):
+    def get(self, key, *, with_source: bool = True):
         self.load()
-        vec = self._store.get(key)
+        norm_key = normalize_query_key(str(key))
+        vec = self._store.get(norm_key)
         if vec is None:
             self._misses += 1
-            return None, None
+            return (None, None) if with_source else None
         if not isinstance(vec, np.ndarray) or vec.dtype != np.float32 or vec.shape != (self.embedding_dim,):
-            self._store.pop(key, None)
+            self._store.pop(norm_key, None)
             self._misses += 1
-            return None, None
-        self._store.move_to_end(key)
+            return (None, None) if with_source else None
+        self._store.move_to_end(norm_key)
         self._hits += 1
-        if key in self._disk_keys:
-            self._disk_keys.discard(key)
+        if not with_source:
+            return vec
+        if norm_key in self._disk_keys:
+            self._disk_keys.discard(norm_key)
             return vec, "disk"
         return vec, "mem"
 
-    def set(self, key, vec):
+    def put(self, key, vec):
         self.load()
-        self._store[key] = vec
-        self._store.move_to_end(key)
+        norm_key = normalize_query_key(str(key))
+        vec = np.asarray(vec, dtype=np.float32)
+        if vec.shape != (self.embedding_dim,):
+            raise ValueError(f"Embedding must have shape ({self.embedding_dim},), got {vec.shape}")
+        self._store[norm_key] = vec
+        self._store.move_to_end(norm_key)
         self._evict_if_needed()
+
+    # Backward compatible alias
+    def set(self, key, vec):
+        return self.put(key, vec)
 
     def _evict_if_needed(self):
         while len(self._store) > self.max_size:
@@ -156,4 +184,16 @@ class QueryEmbeddingCache:
             "evictions": getattr(self, "_evictions", 0),
             "size": len(getattr(self, "_store", {})),
             "max_size": getattr(self, "max_size", 0),
+        }
+
+    def get_stats(self):
+        """Audit-friendly stats contract."""
+        hits = int(getattr(self, "_hits", 0))
+        misses = int(getattr(self, "_misses", 0))
+        return {
+            "total_requests": hits + misses,
+            "hits": hits,
+            "misses": misses,
+            "evictions": int(getattr(self, "_evictions", 0)),
+            "current_size": len(getattr(self, "_store", {})),
         }

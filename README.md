@@ -2,6 +2,35 @@
 
 An AI-powered job discovery engine that helps users find relevant jobs using natural language queries and iterative refinement.
 
+## What this demo proves
+- FAST_DEMO load speed on 20k jobs (memmap embeddings) is ~2.67s–2.81s.
+- Cached query latency is consistently low in offline runs (see measured timings below).
+- Explainable scoring shows *why* a result ranks (vector, lexical, mission, role gate, cache source).
+- Offline mode is deterministic and reproducible (no OpenAI calls).
+- Golden regression checks guard ranking quality across changes.
+
+## Step 4 (proof in one pass)
+**One-liner that just works (offline, fast, explainable, trace export):**
+```powershell
+$env:OFFLINE_MODE="1"; $env:FAST_DEMO="1"; python .\demo.py --explain --trace-out data\trace.jsonl
+```
+
+**What good output looks like:**
+- Offline mode banner + FAST_DEMO load
+- Results include explain blocks (vector/lexical/mission/role_gate/cache)
+- Trace file written to `data/trace.jsonl`
+
+**Proof artifacts to inspect:**
+- `data/eval_report.md` (quality + timings)
+- `data/golden_snapshot.md` (deterministic top-5 IDs)
+- `python -m pytest -q` (regression gate)
+
+**What should not change run-to-run:**
+- Golden top-5 IDs in `data/golden_snapshot.md` (unless you intentionally regenerate)
+
+**Step 4 deliverable:**
+Use the commands below to reproduce outputs and verify artifacts.
+
 ## Quick Start
 
 ### 1. Install Dependencies
@@ -35,6 +64,13 @@ python demo.py
 3. Compute cosine similarity against all 3 embedding vectors
 4. Weighted combination: `0.4*explicit + 0.4*inferred + 0.2*company`
 5. Return top-K results ranked by combined score
+
+### Explainable Ranking
+Pass `--explain` in the demo to emit a score breakdown per result. This includes:
+- Vector score components
+- Title/role boosts
+- Mission/remote boosts
+- Final composite score
 
 **Why this approach:**
 - Avoids re-embedding jobs (expensive)
@@ -92,6 +128,63 @@ python .\demo.py --print-cache-keys
 # Debug attribution proof (mem vs disk vs fresh)
 python .\demo.py --debug-cache --print-cache-keys
 ```
+
+## Measured Performance
+From recent offline FAST_DEMO runs (20k jobs, memmap embeddings):
+- FAST_DEMO load time: 2.67s–2.81s
+- Typical query timings (cache hit):
+  - embed: 0.000–0.001s
+  - vector: ~0.047–0.079s
+  - rerank: ~0.005–0.010s
+
+Outlier note: the “warehouse associate” rerank once hit 1.434s; after candidate cap + timing breakdowns, it is now ~0.004s.
+
+## Caching
+Query embeddings flow through three layers:
+- **disk**: persisted embeddings from previous runs (`data/query_vec_cache.pkl`)
+- **mem**: in-process LRU cache
+- **fresh**: new embeddings on cache miss
+
+Observed cache hit rates from demo runs:
+- 89% (8/9)
+- 80% (4/5)
+
+Prewarm can be disabled (`QUERY_CACHE_PREWARM=0`) and the cache still serves disk hits.
+
+## Explainability + Trace Artifacts
+- `--explain` prints per-result score breakdowns: vector, lexical, mission, role_gate, cache source.
+- `--trace-out data/trace.jsonl` writes per-query JSONL with timings, cache stats, and top results.
+
+Artifacts in this repo:
+- `data/trace.jsonl`
+- `data/eval_report.md`
+- `data/golden_snapshot.md`
+- `data/golden_diff.md`
+
+## Quality and Regression
+**Offline eval harness** (`scripts/eval_offline.py`) computes:
+- role_intent_hit_rate (title contains ROLE terms)
+- remote_precision (when query asks remote)
+- mission_precision (when query is mission-focused)
+- diversity (unique companies / 10)
+
+**Golden regression** checks expected top-5 job IDs per query:
+- Generate/update snapshot: `scripts/generate_golden.py --force`
+- Check drift: `scripts/check_golden.py`
+
+## Reproduce My Runs
+```powershell
+OFFLINE_MODE=1 FAST_DEMO=1 python .\demo.py --explain --trace-out data\trace.jsonl
+OFFLINE_MODE=1 FAST_DEMO=1 python .\scripts\eval_offline.py
+OFFLINE_MODE=1 FAST_DEMO=1 python .\scripts\generate_golden.py --force
+OFFLINE_MODE=1 FAST_DEMO=1 python .\scripts\check_golden.py
+python -m pytest -q
+```
+
+Artifacts to inspect:
+- `data/eval_report.md`
+- `data/golden_snapshot.md`
+- `data/trace.jsonl`
 
 ## Trade-offs Made
 
@@ -189,8 +282,10 @@ With $10 budget, you can:
 ### 1. Start with basic search
 ```python
 from src.search_engine import JobSearchEngine
+from src.query_cache import QueryEmbeddingCache
 
-engine = JobSearchEngine(jobs, embeddings)
+cache = QueryEmbeddingCache()
+engine = JobSearchEngine(jobs, embeddings, query_cache=cache)
 results = engine.search("data science jobs")
 ```
 

@@ -4,13 +4,13 @@ import re
 import json
 import html
 import atexit
+import time
+import hashlib
 from src.query_cache import (
     QueryEmbeddingCache,
     normalize_query_key,
-    query_cache_max,
-    query_cache_path,
     query_cache_prewarm_write,
-    query_cache_write,
+    should_log_cache_debug,
 )
 from datetime import datetime, timezone
 from openai import OpenAI
@@ -99,20 +99,36 @@ ROLE_NEAR_MISS_TOKENS = {
     "sre",
 }
 
+def get_job_id(job):
+    meta = job.get("_meta", {}) or {}
+    for key in ("job_id", "url", "source_id"):
+        value = meta.get(key) or job.get(key)
+        if value:
+            return str(value)
+
+    title = meta.get("title") or job.get("title") or ""
+    company = meta.get("company") or job.get("company") or ""
+    location = meta.get("location") or job.get("location") or ""
+    workplace = meta.get("workplace_type") or job.get("workplace_type") or ""
+
+    def _norm(text):
+        return " ".join(str(text).strip().lower().split())
+
+    base = f"{_norm(title)}|{_norm(company)}|{_norm(location)}|{_norm(workplace)}"
+    digest = hashlib.sha1(base.encode("utf-8")).hexdigest()[:12]
+    return f"sha1:{digest}"
+
 class JobSearchEngine:
-    def __init__(self, jobs, embeddings, debug_cache=False, emoji_ok=True):
+    def __init__(self, jobs, embeddings, debug_cache=False, emoji_ok=True, explain=False, query_cache: QueryEmbeddingCache | None = None):
         self.jobs = jobs
         self.embeddings = embeddings
         self._debug_cache = debug_cache
         self._emoji_ok = emoji_ok
+        self._explain = explain
         self._embedding_dim = 1536
-        self._query_cache = QueryEmbeddingCache(
-            max_size=query_cache_max(),
-            path=query_cache_path(),
-            enable_disk=query_cache_write(),
-            embedding_dim=self._embedding_dim,
-            debug=debug_cache,
-        )
+        if query_cache is None:
+            raise ValueError("JobSearchEngine requires a QueryEmbeddingCache instance (dependency injection).")
+        self._query_cache = query_cache
         self._prewarm_write = query_cache_prewarm_write()
         self._prewarm_keys = set()
         self._prewarm_cache = {}
@@ -182,7 +198,7 @@ class JobSearchEngine:
     def embed_query(self, query):
         """Embed a query using OpenAI"""
         cache_key = normalize_query_key(query)
-        cached, source = self._query_cache.get(cache_key)
+        cached, source = self._query_cache.get(query)
         if cached is not None:
             self._last_embed_source = source
             self._last_embed_cache_hit = True
@@ -200,7 +216,7 @@ class JobSearchEngine:
         if os.getenv("OFFLINE_MODE") == "1":
             vec = np.asarray(self._offline_query_vector(query), dtype=np.float32)
             if self._prewarm_write or cache_key not in self._prewarm_keys:
-                self._query_cache.set(cache_key, vec)
+                self._query_cache.put(query, vec)
                 if self._prewarm_write and cache_key in self._prewarm_keys:
                     self._query_cache.save(force=True)
             else:
@@ -229,7 +245,7 @@ class JobSearchEngine:
         
         vec = np.asarray(response.data[0].embedding, dtype=np.float32)
         if self._prewarm_write or cache_key not in self._prewarm_keys:
-            self._query_cache.set(cache_key, vec)
+            self._query_cache.put(query, vec)
             if self._prewarm_write and cache_key in self._prewarm_keys:
                 self._query_cache.save(force=True)
             else:
@@ -252,7 +268,7 @@ class JobSearchEngine:
 
     def _log_query_cache_evictions(self):
         evictions = self._query_cache.evictions()
-        if evictions:
+        if evictions and should_log_cache_debug():
             print(f"Query cache evicted {evictions} entries (max={self._query_cache.max_size})")
 
     def mark_prewarm_keys(self, queries):
@@ -270,7 +286,7 @@ class JobSearchEngine:
         return self._query_cache.max_size
 
     def get_query_cache_stats(self):
-        return self._query_cache.stats()
+        return self._query_cache.get_stats()
 
     def _log_usage(self, feature, model, input_text, response):
         """Append a safe JSONL usage record to tokens_report.txt."""
@@ -308,7 +324,8 @@ class JobSearchEngine:
                 "OFFLINE_MODE is enabled but embeddings are not available to build offline query vectors."
             )
 
-        seed = abs(hash(query)) % (2**32)
+        digest = hashlib.sha1(str(query).encode("utf-8")).hexdigest()
+        seed = int(digest[:8], 16)
         rng = np.random.default_rng(seed)
         vec = rng.normal(size=dim).astype(np.float32)
         norm = np.linalg.norm(vec)
@@ -363,6 +380,7 @@ class JobSearchEngine:
             0.4 * scores_inferred +
             0.2 * scores_company
         )
+        vector_scores = combined_scores.copy()
 
         if role_tokens or query_terms:
             title_scores = np.zeros(len(self.jobs), dtype=np.float32)
@@ -417,15 +435,21 @@ class JobSearchEngine:
         vector_time = (datetime.now(timezone.utc) - vector_start).total_seconds()
 
         rerank_start = datetime.now(timezone.utc)
+        t_mission_s = 0.0
+        t_lexical_s = 0.0
+        t_role_gate_s = 0.0
         why_flags_by_idx = {}
         for idx in candidate_indices:
             job = self.jobs[idx]
+            mission_start = time.perf_counter()
             mission_match, mission_reason = self._mission_match(job)
+            t_mission_s += time.perf_counter() - mission_start
             if mission_match:
                 mission_bonus[idx] = 0.08
                 meta = job.get("_meta")
                 if isinstance(meta, dict):
                     meta["mission_match"] = True
+            lexical_start = time.perf_counter()
             lexical_bonus[idx], flags = self._lexical_boost(
                 job,
                 query_terms,
@@ -433,7 +457,9 @@ class JobSearchEngine:
                 wants_python=wants_python,
                 mission_reason=mission_reason,
             )
+            t_lexical_s += time.perf_counter() - lexical_start
             if role_tokens:
+                role_start = time.perf_counter()
                 meta = job.get("_meta", {}) or {}
                 title = meta.get("title") or job.get("title") or ""
                 title_tokens = self._tokenize(str(title))
@@ -449,8 +475,20 @@ class JobSearchEngine:
                     lexical_bonus[idx] -= 0.25
                 flags["role_title_hit"] = bool(title_tokens & role_gate_tokens) if title_tokens else False
                 flags["role_title_delta"] = round(float(lexical_bonus[idx]), 3)
+                t_role_gate_s += time.perf_counter() - role_start
             if flags:
                 why_flags_by_idx[idx] = flags
+            if self._explain:
+                meta = job.setdefault("_meta", {})
+                meta["_score_debug"] = {
+                    "vector": round(float(vector_scores[idx]), 3),
+                    "lexical": round(float(lexical_bonus[idx]), 3),
+                    "mission": round(float(mission_bonus[idx]), 3),
+                    "role_gate": (
+                        "+" if (role_tokens and why_flags_by_idx.get(idx, {}).get("role_title_hit"))
+                        else ("-" if role_tokens else "n/a")
+                    ),
+                }
         combined_scores = combined_scores + mission_bonus + lexical_bonus
         if wants_remote:
             combined_scores[~candidate_mask] = -np.inf
@@ -462,6 +500,8 @@ class JobSearchEngine:
             meta = self.jobs[i].get("_meta")
             if isinstance(meta, dict):
                 meta["why_flags"] = why_flags_by_idx.get(i, {})
+                if self._explain and "_score_debug" in meta:
+                    meta["_score_debug"]["total"] = round(float(combined_scores[i]), 3)
         rerank_time = (datetime.now(timezone.utc) - rerank_start).total_seconds()
 
         if os.getenv("ROLE_INTENT_DEBUG") == "1" and role_tokens:
@@ -487,11 +527,15 @@ class JobSearchEngine:
             print(f"Found {len(results)} results")
         self.last_search_stats = {
             "candidates_k": int(candidate_k),
+            "candidate_count": int(len(candidate_indices)),
             "vector_time_s": vector_time,
             "rerank_time_s": rerank_time,
             "t_embed_s": t_embed,
             "t_vector_s": vector_time,
             "t_lexical_s": rerank_time,
+            "t_mission_s": t_mission_s,
+            "t_lexical_inner_s": t_lexical_s,
+            "t_role_gate_s": t_role_gate_s,
             "t_filters_s": t_filters,
             "t_format_s": 0.0,
             "embed_cache_hit": getattr(self, "_last_embed_cache_hit", False),
@@ -529,7 +573,20 @@ class JobSearchEngine:
             why_parts.append(why_flags.get("mission_reason"))
         why_text = f" (why: {', '.join(why_parts)})" if why_parts else ""
 
-        return f"{rank}. {title} @ {company} [{bracket}]{suffix}{why_text}"
+        explain_block = ""
+        if self._explain:
+            dbg = meta.get("_score_debug", {})
+            if dbg:
+                explain_block = (
+                    f"\n     ↳ score={dbg.get('total')} "
+                    f"(vector={dbg.get('vector')}, "
+                    f"lexical={dbg.get('lexical')}, "
+                    f"mission={dbg.get('mission')}, "
+                    f"role_gate={dbg.get('role_gate')}, "
+                    f"cache={getattr(self, '_last_embed_source', 'fresh')})"
+                )
+
+        return f"{rank}. {title} @ {company} [{bracket}]{suffix}{why_text}{explain_block}"
 
     def _mission_match(self, job):
         nonprofit = self._is_nonprofit_signal(job)

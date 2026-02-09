@@ -1,0 +1,976 @@
+{
+  "generated_at": "2026-02-09T07:37:43.930942+00:00",
+  "mode": "offline",
+  "fast_demo": true,
+  "candidate_k": 600,
+  "passes": [
+    {
+      "label": "Pass 1 (cold)",
+      "results": [
+        {
+          "query": "data science jobs",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.8
+          },
+          "timings": {
+            "embed": 0.001037,
+            "vector": 0.080033,
+            "rerank": 0.006994
+          },
+          "notes": [],
+          "top_titles": [
+            "Sr. Director, Data Science - Customer + Digital",
+            "Vice President, Data Science",
+            "Senior Machine Learning Engineer- Data Science Platform",
+            "Director, Data Science",
+            "Director, Data Science",
+            "Menu Management Software and Data Specialist",
+            "SuccessFactors Recruiting: Sr. Program Manager - City Data Alliance (Bloomberg Center for Government Excellence) (120255)",
+            "Senior Data Engineer",
+            "Adjunct Faculty: Computer Science/CIS/Cyber Operations",
+            "FT Faculty: Assistant/Associate Professor, Computer Science/CIS/Cyber"
+          ],
+          "top_companies": [
+            "Macy's Jobs",
+            "Duetto Research",
+            "Visa",
+            "Omnicom Media Group US H&S",
+            "Omnicom Media Group US H&S",
+            "College of Saint Benedict/Saint John's University",
+            "Johns Hopkins University",
+            "Space Telescope Science Institute",
+            "Shaw University",
+            "Shaw University"
+          ]
+        },
+        {
+          "query": "senior ML engineer",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.06502,
+            "rerank": 0.01
+          },
+          "notes": [],
+          "top_titles": [
+            "Senior Machine Learning Engineer - I  (MLOps/LLMOps)",
+            "Senior Data Engineer",
+            "Senior Data Engineer",
+            "SENIOR HPC (High-Performance Computing) ENGINEER",
+            "Senior R&D Engineer (Bloomfield, US)",
+            "4.2. Senior Production Engineer",
+            "Senior Software Engineer -  Autonomy Interface",
+            "Senior Software Engineer - Navigation (ONSITE)",
+            "Municipal Senior Project Engineer",
+            "Senior Electrical Engineer"
+          ],
+          "top_companies": [
+            "Sumo Logic",
+            "Space Telescope Science Institute",
+            "Space Telescope Science Institute",
+            "Scripps Research Institute",
+            "ABB E-Mobility",
+            "Phoenix Tailings",
+            "Overland AI",
+            "RTX",
+            "OHM Advisors",
+            "CRB"
+          ]
+        },
+        {
+          "query": "mlops engineer",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.072585,
+            "rerank": 0.00801
+          },
+          "notes": [],
+          "top_titles": [
+            "Machine Learning Engineer-MLOps",
+            "Senior Machine Learning Engineer - I  (MLOps/LLMOps)",
+            "Chief Engineer",
+            "Software Engineer II or III",
+            "Software Engineer II or III",
+            "Network Engineer",
+            "SENIOR HPC (High-Performance Computing) ENGINEER",
+            "Senior Data Engineer",
+            "Sr. Software Engineer - Full Stack (.NET, React)",
+            "Chief Engineer"
+          ],
+          "top_companies": [
+            "JPMorgan Chase",
+            "Sumo Logic",
+            "Avion Hospitality",
+            "Colonial Williamsburg Foundation",
+            "Colonial Williamsburg Foundation",
+            "Catholic Charities of Baltimore",
+            "Scripps Research Institute",
+            "Space Telescope Science Institute",
+            "University of British Columbia",
+            "Concord Hospitality Enterprises Company"
+          ]
+        },
+        {
+          "query": "product manager",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.060843,
+            "rerank": 0.006999
+          },
+          "notes": [],
+          "top_titles": [
+            "Sr. Group Product Manager - General Surgery",
+            "Product Marketing Manager (Contract)",
+            "Associate Product Manager",
+            "Offshore Training Product Manager- Houston",
+            "Senior Product Manager - Identity & Access, Multi-User",
+            "Product Manager, Web & Apps",
+            "Associate Product Manager",
+            "Fractional Product Manager \u2013 EdTech Deployment",
+            "Product Manager, YouTube Trust and Safety",
+            "Principal Product Manager (IT)"
+          ],
+          "top_companies": [
+            "Intuitive Surgical",
+            "Sketchy",
+            "Ascentek",
+            "American Bureau of Shipping",
+            "Coinbase",
+            "California Academy of Sciences",
+            "Ascentek",
+            "Playlab",
+            "YouTube",
+            "Sekisui Diagnostics"
+          ]
+        },
+        {
+          "query": "business analyst",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.052092,
+            "rerank": 0.009997
+          },
+          "notes": [],
+          "top_titles": [
+            "Junior Salesforce Business Analyst",
+            "Business Analyst I",
+            "Commercial Business Analyst",
+            "Sr. Business Intelligence Analyst",
+            "Senior Salesforce Business Analyst",
+            "Analyst/Sr Analyst, Sales Business Intelligence (Fort Worth, TX, US)",
+            "Systems and Business Intelligence Analyst",
+            "Business System Analyst",
+            "Senior Analyst, Business Systems (Miramar, FL, US, 33132)",
+            "Business Systems Analyst"
+          ],
+          "top_companies": [
+            "Cherokee Federal",
+            "Hill International",
+            "WIN Waste Innovations",
+            "Copperweld",
+            "Cherokee Federal",
+            "American Airlines",
+            "ADP",
+            "City of Raleigh",
+            "Royal Caribbean Group",
+            "JTEKT Column Systems North America"
+          ]
+        },
+        {
+          "query": "product owner remote",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": 1.0,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.048068,
+            "rerank": 0.008537
+          },
+          "notes": [],
+          "top_titles": [
+            "Principal Product Owner",
+            "Product Owner",
+            "Product Owner",
+            "Product Manager, AI",
+            "Product Manager II - Core Infrastructure",
+            "Staff Product Manager, AI",
+            "Senior Lead Product Manager - Data Products",
+            "Senior Product Manager - Product Analytics",
+            "Senior Lead Product Manager - Platform Infrastructure & Experiences",
+            "Associate Director - Insights & Innovation Product Manager"
+          ],
+          "top_companies": [
+            "DTCC",
+            "Symetra",
+            "Risant Health",
+            "Wealth.com",
+            "Coinbase",
+            "Oscar Health",
+            "Siepe",
+            "Datadog",
+            "Siepe",
+            "Depository Trust Company"
+          ]
+        },
+        {
+          "query": "remote python developer",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": 1.0,
+            "mission_precision": null,
+            "diversity": 1.0
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.048528,
+            "rerank": 0.007543
+          },
+          "notes": [],
+          "top_titles": [
+            "SharePoint Developer",
+            "Salesforce Developer",
+            "Senior Full Stack Developer - Distribution (Chicago, IL)",
+            "Java Developer (Irving, TX, US)",
+            "Software Developer II - Dewar (Hybrid)",
+            "Mainframe Developer",
+            "OneStream Architect & Developer",
+            "Senior Python Engineer, Truework",
+            "Structural Engineer II - Remote or Onsite",
+            "SuccessFactors Recruiting: Sr. Administrative Manager (Environmental Health & Engineering) (120248)"
+          ],
+          "top_companies": [
+            "Associated",
+            "PayrollOrg",
+            "Bunzl Distribution USA",
+            "Capgemini",
+            "Intact Insurance Specialty Solutions",
+            "BITCO Corporation",
+            "Covia",
+            "Checkr",
+            "Global Finishing Solutions",
+            "Johns Hopkins University"
+          ]
+        },
+        {
+          "query": "nonprofit climate impact jobs",
+          "metrics": {
+            "role_intent_hit_rate": 0.1,
+            "remote_precision": null,
+            "mission_precision": 0.4,
+            "diversity": 0.5
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.024,
+            "rerank": 0.004018
+          },
+          "notes": [],
+          "top_titles": [
+            "Climate Campaigns Associate",
+            "AI Jobs Institute - Director of Strategy and Partnerships",
+            "Careers at University of Missouri Health Care | University of Missouri Health Care jobs",
+            "Director, Jobs (National)",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs"
+          ],
+          "top_companies": [
+            "Environment America",
+            "Pursuit",
+            "University of Missouri Health Care",
+            "Best Buddies",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health"
+          ]
+        },
+        {
+          "query": "mission-driven data scientist",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": 0.0,
+            "diversity": 1.0
+          },
+          "timings": {
+            "embed": 0.001,
+            "vector": 0.059745,
+            "rerank": 0.006449
+          },
+          "notes": [],
+          "top_titles": [
+            "Data Scientist",
+            "Data Scientist",
+            "Senior Health Data Scientist (HEOR/RWD)",
+            "Data Scientist, Algorithms",
+            "Data Scientist II - Mental Health Outcomes Statistician",
+            "Data Scientist I/II",
+            "Data Scientist",
+            "Senior Staff Data Scientist - Bayesian Experimentation & Causal Inference",
+            "Data Scientist, Senior Associate - Customer Analytics",
+            "Senior Data Scientist"
+          ],
+          "top_companies": [
+            "Twitch",
+            "Horace Mann",
+            "Inovalon",
+            "Lyft",
+            "Equip Health",
+            "San Diego Association of Governments",
+            "Ford Motor Company",
+            "Headway",
+            "JPMorgan Chase",
+            "RevenueCat"
+          ]
+        },
+        {
+          "query": "electrician apprentice",
+          "metrics": {
+            "role_intent_hit_rate": 0.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 1.0
+          },
+          "timings": {
+            "embed": 0.001012,
+            "vector": 0.028422,
+            "rerank": 0.005992
+          },
+          "notes": [],
+          "top_titles": [
+            "Electrician Trainee - One Year Apprenticeship Required",
+            "Senior Electrician - North Hospital",
+            "Apprentice",
+            "NDT Assistant/ Apprentice",
+            "Electrician",
+            "Industrial Electrician - Austin Industrial (Eastover, SC)",
+            "Industrial Electrician - Austin Industrial (Eastover, SC)",
+            "ELECTRICIAN",
+            "Maintenance Electrician - Night Shift",
+            "HVAC Install Apprentice"
+          ],
+          "top_companies": [
+            "Central Moloney",
+            "Indiana University Health System",
+            "Andrew W. Mellon Foundation",
+            "TEAM, Inc.",
+            "Hearth & Home Technologies",
+            "Austin Industries",
+            "Austin Industrial",
+            "City of Houston, TX",
+            "Arcosa",
+            "Scottsdale Air"
+          ]
+        },
+        {
+          "query": "registered nurse",
+          "metrics": {
+            "role_intent_hit_rate": 0.1,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.6
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.024769,
+            "rerank": 0.005001
+          },
+          "notes": [],
+          "top_titles": [
+            "Registered Nurse-Tele/FT/Days",
+            "REGISTERED NURSE 4A Med Surg PT 24 HR Night Flex (7pm-7:30am) Jeanes Campus",
+            "Registered Nurse (RN) Ortho Neuro Stepdown (Durham, NC, US, 27704)",
+            "Registered Nurse (Experienced RN or New Grad RN) - Neuro Trauma Spine PCU - BONUS ELIGIBLE (Durham, NC, US, 27710)",
+            "PRN Registered Nurse (RN) Acute Care/Med Surg",
+            "Registered Nurse - Main NICU - Full Time - Nights",
+            "Registered Nurse (RN) Ortho Neuro Stepdown (Durham, NC, US, 27710)",
+            "Registered Nurse: Infusion Center & Oncology",
+            "PRN Registered Nurse (RN) CCU",
+            "Registered Nurse (RN) - Adult Medicine Stepdown (Durham, NC, US, 27710)"
+          ],
+          "top_companies": [
+            "Community Hospital of Huntington Park",
+            "Temple University Hospital (TUH)",
+            "Duke University",
+            "Duke University",
+            "Valley View Hospital",
+            "The Christ Hospital",
+            "Duke University",
+            "Huggins Hospital",
+            "Valley View Hospital",
+            "Duke University"
+          ]
+        },
+        {
+          "query": "warehouse associate",
+          "metrics": {
+            "role_intent_hit_rate": 0.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.7
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.027003,
+            "rerank": 0.005001
+          },
+          "notes": [],
+          "top_titles": [
+            "Warehouse and Furniture Associate",
+            "Part Time Warehouse Associate",
+            "Part Time Warehouse Associate",
+            "Warehouse Associate $17-$19 hourly",
+            "Warehouse Associate",
+            "Warehouse Associate",
+            "Warehouse Associate",
+            "WAREHOUSE ASSOCIATE 2ND SHIFT MON-FRI 3PM-11:30PM $3 DIFFERENTIAL",
+            "WAREHOUSE ASSOCIATE 3RD SHIFT 11PM-7:30AM SUN-THURS $3 DIFFERENTIAL",
+            "General Warehouse Associate (A Shift 6:00am - 2:30pm)"
+          ],
+          "top_companies": [
+            "Furniture Options / Viciniti",
+            "The Tile Shop",
+            "Capstone Logistics",
+            "Raymour & Flanigan Furniture",
+            "Capstone Logistics",
+            "Capstone Logistics",
+            "Lonestar Electric Supply",
+            "",
+            "Unknown",
+            "Coleto Brands LLC"
+          ]
+        }
+      ],
+      "aggregate": {
+        "role_intent_hit_rate": 0.6833333333333332,
+        "remote_precision": 1.0,
+        "mission_precision": 0.2,
+        "diversity": 0.8416666666666667,
+        "t_embed_s": 0.0002540833333333333,
+        "t_vector_s": 0.049259,
+        "t_rerank_s": 0.007045083333333334
+      },
+      "cache_hit_rate": 0.25
+    },
+    {
+      "label": "Pass 2 (warm)",
+      "results": [
+        {
+          "query": "data science jobs",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.8
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.062501,
+            "rerank": 1.533976
+          },
+          "notes": [
+            "rerank_slow"
+          ],
+          "top_titles": [
+            "Sr. Director, Data Science - Customer + Digital",
+            "Vice President, Data Science",
+            "Senior Machine Learning Engineer- Data Science Platform",
+            "Director, Data Science",
+            "Director, Data Science",
+            "Menu Management Software and Data Specialist",
+            "SuccessFactors Recruiting: Sr. Program Manager - City Data Alliance (Bloomberg Center for Government Excellence) (120255)",
+            "Senior Data Engineer",
+            "Adjunct Faculty: Computer Science/CIS/Cyber Operations",
+            "FT Faculty: Assistant/Associate Professor, Computer Science/CIS/Cyber"
+          ],
+          "top_companies": [
+            "Macy's Jobs",
+            "Duetto Research",
+            "Visa",
+            "Omnicom Media Group US H&S",
+            "Omnicom Media Group US H&S",
+            "College of Saint Benedict/Saint John's University",
+            "Johns Hopkins University",
+            "Space Telescope Science Institute",
+            "Shaw University",
+            "Shaw University"
+          ]
+        },
+        {
+          "query": "senior ML engineer",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.064251,
+            "rerank": 0.006999
+          },
+          "notes": [],
+          "top_titles": [
+            "Senior Machine Learning Engineer - I  (MLOps/LLMOps)",
+            "Senior Data Engineer",
+            "Senior Data Engineer",
+            "SENIOR HPC (High-Performance Computing) ENGINEER",
+            "Senior R&D Engineer (Bloomfield, US)",
+            "4.2. Senior Production Engineer",
+            "Senior Software Engineer -  Autonomy Interface",
+            "Senior Software Engineer - Navigation (ONSITE)",
+            "Municipal Senior Project Engineer",
+            "Senior Electrical Engineer"
+          ],
+          "top_companies": [
+            "Sumo Logic",
+            "Space Telescope Science Institute",
+            "Space Telescope Science Institute",
+            "Scripps Research Institute",
+            "ABB E-Mobility",
+            "Phoenix Tailings",
+            "Overland AI",
+            "RTX",
+            "OHM Advisors",
+            "CRB"
+          ]
+        },
+        {
+          "query": "mlops engineer",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.05353,
+            "rerank": 0.006
+          },
+          "notes": [],
+          "top_titles": [
+            "Machine Learning Engineer-MLOps",
+            "Senior Machine Learning Engineer - I  (MLOps/LLMOps)",
+            "Chief Engineer",
+            "Software Engineer II or III",
+            "Software Engineer II or III",
+            "Network Engineer",
+            "SENIOR HPC (High-Performance Computing) ENGINEER",
+            "Senior Data Engineer",
+            "Sr. Software Engineer - Full Stack (.NET, React)",
+            "Chief Engineer"
+          ],
+          "top_companies": [
+            "JPMorgan Chase",
+            "Sumo Logic",
+            "Avion Hospitality",
+            "Colonial Williamsburg Foundation",
+            "Colonial Williamsburg Foundation",
+            "Catholic Charities of Baltimore",
+            "Scripps Research Institute",
+            "Space Telescope Science Institute",
+            "University of British Columbia",
+            "Concord Hospitality Enterprises Company"
+          ]
+        },
+        {
+          "query": "product manager",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.049325,
+            "rerank": 0.010025
+          },
+          "notes": [],
+          "top_titles": [
+            "Sr. Group Product Manager - General Surgery",
+            "Product Marketing Manager (Contract)",
+            "Associate Product Manager",
+            "Offshore Training Product Manager- Houston",
+            "Senior Product Manager - Identity & Access, Multi-User",
+            "Product Manager, Web & Apps",
+            "Associate Product Manager",
+            "Fractional Product Manager \u2013 EdTech Deployment",
+            "Product Manager, YouTube Trust and Safety",
+            "Principal Product Manager (IT)"
+          ],
+          "top_companies": [
+            "Intuitive Surgical",
+            "Sketchy",
+            "Ascentek",
+            "American Bureau of Shipping",
+            "Coinbase",
+            "California Academy of Sciences",
+            "Ascentek",
+            "Playlab",
+            "YouTube",
+            "Sekisui Diagnostics"
+          ]
+        },
+        {
+          "query": "business analyst",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.055664,
+            "rerank": 0.015014
+          },
+          "notes": [],
+          "top_titles": [
+            "Junior Salesforce Business Analyst",
+            "Business Analyst I",
+            "Commercial Business Analyst",
+            "Sr. Business Intelligence Analyst",
+            "Senior Salesforce Business Analyst",
+            "Analyst/Sr Analyst, Sales Business Intelligence (Fort Worth, TX, US)",
+            "Systems and Business Intelligence Analyst",
+            "Business System Analyst",
+            "Senior Analyst, Business Systems (Miramar, FL, US, 33132)",
+            "Business Systems Analyst"
+          ],
+          "top_companies": [
+            "Cherokee Federal",
+            "Hill International",
+            "WIN Waste Innovations",
+            "Copperweld",
+            "Cherokee Federal",
+            "American Airlines",
+            "ADP",
+            "City of Raleigh",
+            "Royal Caribbean Group",
+            "JTEKT Column Systems North America"
+          ]
+        },
+        {
+          "query": "product owner remote",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": 1.0,
+            "mission_precision": null,
+            "diversity": 0.9
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.050016,
+            "rerank": 0.009
+          },
+          "notes": [],
+          "top_titles": [
+            "Principal Product Owner",
+            "Product Owner",
+            "Product Owner",
+            "Product Manager, AI",
+            "Product Manager II - Core Infrastructure",
+            "Staff Product Manager, AI",
+            "Senior Lead Product Manager - Data Products",
+            "Senior Product Manager - Product Analytics",
+            "Senior Lead Product Manager - Platform Infrastructure & Experiences",
+            "Associate Director - Insights & Innovation Product Manager"
+          ],
+          "top_companies": [
+            "DTCC",
+            "Symetra",
+            "Risant Health",
+            "Wealth.com",
+            "Coinbase",
+            "Oscar Health",
+            "Siepe",
+            "Datadog",
+            "Siepe",
+            "Depository Trust Company"
+          ]
+        },
+        {
+          "query": "remote python developer",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": 1.0,
+            "mission_precision": null,
+            "diversity": 1.0
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.056971,
+            "rerank": 0.013017
+          },
+          "notes": [],
+          "top_titles": [
+            "SharePoint Developer",
+            "Salesforce Developer",
+            "Senior Full Stack Developer - Distribution (Chicago, IL)",
+            "Java Developer (Irving, TX, US)",
+            "Software Developer II - Dewar (Hybrid)",
+            "Mainframe Developer",
+            "OneStream Architect & Developer",
+            "Senior Python Engineer, Truework",
+            "Structural Engineer II - Remote or Onsite",
+            "SuccessFactors Recruiting: Sr. Administrative Manager (Environmental Health & Engineering) (120248)"
+          ],
+          "top_companies": [
+            "Associated",
+            "PayrollOrg",
+            "Bunzl Distribution USA",
+            "Capgemini",
+            "Intact Insurance Specialty Solutions",
+            "BITCO Corporation",
+            "Covia",
+            "Checkr",
+            "Global Finishing Solutions",
+            "Johns Hopkins University"
+          ]
+        },
+        {
+          "query": "nonprofit climate impact jobs",
+          "metrics": {
+            "role_intent_hit_rate": 0.1,
+            "remote_precision": null,
+            "mission_precision": 0.4,
+            "diversity": 0.5
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.034757,
+            "rerank": 0.003997
+          },
+          "notes": [],
+          "top_titles": [
+            "Climate Campaigns Associate",
+            "AI Jobs Institute - Director of Strategy and Partnerships",
+            "Careers at University of Missouri Health Care | University of Missouri Health Care jobs",
+            "Director, Jobs (National)",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs",
+            "Careers at Baylor Scott & White Health | Baylor Scott & White Health jobs"
+          ],
+          "top_companies": [
+            "Environment America",
+            "Pursuit",
+            "University of Missouri Health Care",
+            "Best Buddies",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health",
+            "Baylor Scott & White Health"
+          ]
+        },
+        {
+          "query": "mission-driven data scientist",
+          "metrics": {
+            "role_intent_hit_rate": 1.0,
+            "remote_precision": null,
+            "mission_precision": 0.0,
+            "diversity": 1.0
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.064553,
+            "rerank": 0.013527
+          },
+          "notes": [],
+          "top_titles": [
+            "Data Scientist",
+            "Data Scientist",
+            "Senior Health Data Scientist (HEOR/RWD)",
+            "Data Scientist, Algorithms",
+            "Data Scientist II - Mental Health Outcomes Statistician",
+            "Data Scientist I/II",
+            "Data Scientist",
+            "Senior Staff Data Scientist - Bayesian Experimentation & Causal Inference",
+            "Data Scientist, Senior Associate - Customer Analytics",
+            "Senior Data Scientist"
+          ],
+          "top_companies": [
+            "Twitch",
+            "Horace Mann",
+            "Inovalon",
+            "Lyft",
+            "Equip Health",
+            "San Diego Association of Governments",
+            "Ford Motor Company",
+            "Headway",
+            "JPMorgan Chase",
+            "RevenueCat"
+          ]
+        },
+        {
+          "query": "electrician apprentice",
+          "metrics": {
+            "role_intent_hit_rate": 0.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 1.0
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.031532,
+            "rerank": 0.006014
+          },
+          "notes": [],
+          "top_titles": [
+            "Electrician Trainee - One Year Apprenticeship Required",
+            "Senior Electrician - North Hospital",
+            "Apprentice",
+            "NDT Assistant/ Apprentice",
+            "Electrician",
+            "Industrial Electrician - Austin Industrial (Eastover, SC)",
+            "Industrial Electrician - Austin Industrial (Eastover, SC)",
+            "ELECTRICIAN",
+            "Maintenance Electrician - Night Shift",
+            "HVAC Install Apprentice"
+          ],
+          "top_companies": [
+            "Central Moloney",
+            "Indiana University Health System",
+            "Andrew W. Mellon Foundation",
+            "TEAM, Inc.",
+            "Hearth & Home Technologies",
+            "Austin Industries",
+            "Austin Industrial",
+            "City of Houston, TX",
+            "Arcosa",
+            "Scottsdale Air"
+          ]
+        },
+        {
+          "query": "registered nurse",
+          "metrics": {
+            "role_intent_hit_rate": 0.1,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.6
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.024058,
+            "rerank": 0.005529
+          },
+          "notes": [],
+          "top_titles": [
+            "Registered Nurse-Tele/FT/Days",
+            "REGISTERED NURSE 4A Med Surg PT 24 HR Night Flex (7pm-7:30am) Jeanes Campus",
+            "Registered Nurse (RN) Ortho Neuro Stepdown (Durham, NC, US, 27704)",
+            "Registered Nurse (Experienced RN or New Grad RN) - Neuro Trauma Spine PCU - BONUS ELIGIBLE (Durham, NC, US, 27710)",
+            "PRN Registered Nurse (RN) Acute Care/Med Surg",
+            "Registered Nurse - Main NICU - Full Time - Nights",
+            "Registered Nurse (RN) Ortho Neuro Stepdown (Durham, NC, US, 27710)",
+            "Registered Nurse: Infusion Center & Oncology",
+            "PRN Registered Nurse (RN) CCU",
+            "Registered Nurse (RN) - Adult Medicine Stepdown (Durham, NC, US, 27710)"
+          ],
+          "top_companies": [
+            "Community Hospital of Huntington Park",
+            "Temple University Hospital (TUH)",
+            "Duke University",
+            "Duke University",
+            "Valley View Hospital",
+            "The Christ Hospital",
+            "Duke University",
+            "Huggins Hospital",
+            "Valley View Hospital",
+            "Duke University"
+          ]
+        },
+        {
+          "query": "warehouse associate",
+          "metrics": {
+            "role_intent_hit_rate": 0.0,
+            "remote_precision": null,
+            "mission_precision": null,
+            "diversity": 0.7
+          },
+          "timings": {
+            "embed": 0.0,
+            "vector": 0.028546,
+            "rerank": 0.003997
+          },
+          "notes": [],
+          "top_titles": [
+            "Warehouse and Furniture Associate",
+            "Part Time Warehouse Associate",
+            "Part Time Warehouse Associate",
+            "Warehouse Associate $17-$19 hourly",
+            "Warehouse Associate",
+            "Warehouse Associate",
+            "Warehouse Associate",
+            "WAREHOUSE ASSOCIATE 2ND SHIFT MON-FRI 3PM-11:30PM $3 DIFFERENTIAL",
+            "WAREHOUSE ASSOCIATE 3RD SHIFT 11PM-7:30AM SUN-THURS $3 DIFFERENTIAL",
+            "General Warehouse Associate (A Shift 6:00am - 2:30pm)"
+          ],
+          "top_companies": [
+            "Furniture Options / Viciniti",
+            "The Tile Shop",
+            "Capstone Logistics",
+            "Raymour & Flanigan Furniture",
+            "Capstone Logistics",
+            "Capstone Logistics",
+            "Lonestar Electric Supply",
+            "",
+            "Unknown",
+            "Coleto Brands LLC"
+          ]
+        }
+      ],
+      "aggregate": {
+        "role_intent_hit_rate": 0.6833333333333332,
+        "remote_precision": 1.0,
+        "mission_precision": 0.2,
+        "diversity": 0.8416666666666667,
+        "t_embed_s": 0.0,
+        "t_vector_s": 0.047975333333333335,
+        "t_rerank_s": 0.13559125
+      },
+      "cache_hit_rate": 1.0
+    }
+  ]
+}
