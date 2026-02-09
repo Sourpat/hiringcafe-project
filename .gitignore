@@ -1,0 +1,30 @@
+.env
+__pycache__/
+*.pkl
+*.pyc
+.DS_Store
+jobs_index.pkl
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Data artifacts (too large for git)
+data/*.jsonl
+data/*.pkl
+data/*.npy
+data/*.npz
+data/*.parquet
+data/*.csv
+data/*.tsv
+
+# Query cache + reports
+data/query_vec_cache.pkl
+tokens_report.txt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
