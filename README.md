@@ -2,12 +2,23 @@
 
 An AI-powered job discovery engine that helps users find relevant jobs using natural language queries and iterative refinement.
 
-## What this demo proves
-- FAST_DEMO load speed on 20k jobs (memmap embeddings) is ~2.67s–2.81s.
-- Cached query latency is consistently low in offline runs (see measured timings below).
-- Explainable scoring shows *why* a result ranks (vector, lexical, mission, role gate, cache source).
-- Offline mode is deterministic and reproducible (no OpenAI calls).
-- Golden regression checks guard ranking quality across changes.
+## The problem (why job search is broken)
+Job search is messy for two reasons:
+- **Job descriptions are inconsistent**: critical requirements are often implied, not explicitly stated.
+- **Users search by intent**, not filters: “remote senior ML at mission-driven companies” is a single thought, not 6 dropdowns.
+
+## The solution (what I built)
+This demo is a job discovery engine that:
+- Uses **multi-vector semantic search** (explicit requirements, inferred requirements, company characteristics).
+- Supports **multi-turn refinement** (follow-up intent narrows results without starting over).
+- Stays **token-cheap** via query embedding caching and local scoring.
+- Produces **explainable rankings** and **debug artifacts** to prove why results rank.
+
+## Proof it works (what you can verify quickly)
+- **FAST_DEMO load** on 20k jobs (memmap embeddings): ~2.6s–2.9s in my runs.
+- **Explainable scoring** per result: vector, lexical, mission, role gate, cache source.
+- **Offline deterministic mode**: reproducible runs with **no OpenAI calls**.
+- **Golden regression checks**: stable top results across changes unless intentionally regenerated.
 
 ## Step 4 (proof in one pass)
 **One-liner that just works (offline, fast, explainable, trace export):**
@@ -20,16 +31,29 @@ $env:OFFLINE_MODE="1"; $env:FAST_DEMO="1"; python .\demo.py --explain --trace-ou
 - Results include explain blocks (vector/lexical/mission/role_gate/cache)
 - Trace file written to `data/trace.jsonl`
 
-**Proof artifacts to inspect:**
-- `data/eval_report.md` (quality + timings)
-- `data/golden_snapshot.md` (deterministic top-5 IDs)
-- `python -m pytest -q` (regression gate)
+**Artifacts to inspect in this repo:**
+- `data/trace.jsonl` (per-query timings + top results + cache stats)
+- `data/eval_report.md` (quality metrics + timings)
+- `data/golden_diff.md` + `data/golden_queries.json` (regression harness inputs/outputs)
 
-**What should not change run-to-run:**
-- Golden top-5 IDs in `data/golden_snapshot.md` (unless you intentionally regenerate)
+## Why this approach (not the alternatives)
+Common alternatives and why I didn’t use them for a take-home:
+- **Title-only / keyword-only search**: fails on implied requirements and synonyms.
+- **LLM rerank everything**: great quality, but costs explode when scoring many candidates.
+- **Single embedding for everything**: misses “culture/mission” signal and can overfit to generic wording.
 
-**Step 4 deliverable:**
-Use the commands below to reproduce outputs and verify artifacts.
+What I chose instead:
+- **Precomputed embeddings + local cosine similarity** keep per-query compute cheap.
+- **Three vectors** separate different signals:
+  - *explicit*: what the job clearly states
+  - *inferred*: implied skills/related requirements
+  - *company*: culture/mission/values characteristics
+- A weighted combination balances relevance without letting “company vibe” dominate.
+
+## Offline vs online (cost + reproducibility)
+- **Offline mode (`OFFLINE_MODE=1`)**: deterministic, no network calls, $0 cost.
+- **Online mode**: uses OpenAI for query embeddings and intent parsing.
+  - Cost stays low due to **query embedding cache hit rates** and local scoring.
 
 ## Quick Start
 
@@ -48,6 +72,62 @@ Place in: `data/jobs.jsonl`
 python demo.py
 ```
 
+## Trade-offs and decisions
+This is a demo, so I optimized for **clarity, determinism, and cost control**.
+
+Examples:
+- **Lexical boosts + role gates vs trained ranking model**
+  - Chosen: simple lexical/title gates (transparent, predictable).
+  - Alternative: train a model on click data.
+  - Why not: no labeled feedback data in a take-home.
+  - When I’d change: once we have 1k+ labeled sessions or click logs.
+
+- **LRU cache vs frequency-based cache**
+  - Chosen: LRU (simple, good for “recent repeated queries” in demos).
+  - Alternative: LFU/frequency (better when a few queries dominate).
+  - When I’d change: if production traffic shows stable “top queries” by frequency.
+
+## Discoveries from the dataset (what I observed)
+While running evaluation queries and reviewing results:
+- “Mission-driven” queries often return a mix of nonprofit and public sector roles.
+- Company and description text contains enough signal for simple mission heuristics to work.
+- Outliers happen in real data and need guardrails (see failure handling below).
+
+## Failure modes and how the demo handles them
+- **Cache issues**
+  - Disk cache can be disabled (`QUERY_CACHE_WRITE=0`) and the system still runs.
+  - In offline mode, cached embeddings avoid network dependency entirely.
+
+- **Performance outliers**
+  - The eval harness tracks per-phase timings and flags outliers.
+  - Candidate caps and timing breakdowns prevent pathological rerank runs from dominating.
+
+## Token and cost story (why this stays cheap)
+Two principles keep cost low:
+1. **Query embedding cache** prevents repeat embedding calls.
+2. **Local vector scoring** avoids LLM reranking over large candidate sets.
+
+In **offline mode**: $0 (no OpenAI calls).
+In **online mode**: typical demo sessions remain low-cost because most repeated queries are cache hits.
+
+## What I’d build next (roadmap)
+If this were a real product, I’d sequence improvements like this:
+
+**Month 1 (high impact, low effort)**
+- Add structured filters (`remote:true`, `seniority:senior`) parsed from intent.
+- Salary extraction and range filters.
+- Click feedback capture for lightweight relevance tuning.
+
+**Month 2 (high impact, higher effort)**
+- Better mission alignment scoring (expand nonprofit/public sector detection).
+- Calibrated weighting per query type (skills-heavy vs values-heavy queries).
+- Improved dedupe and diversity constraints.
+
+**Month 3 (scale and productization)**
+- Expose `/search?q=` API endpoint and stable JSON schema.
+- A/B test rank strategies.
+- Observability dashboards for latency, cache hit rate, and quality metrics.
+
 ## Architecture
 
 ### Data Loading (`src/data_loader.py`)
@@ -65,6 +145,19 @@ python demo.py
 4. Weighted combination: `0.4*explicit + 0.4*inferred + 0.2*company`
 5. Return top-K results ranked by combined score
 
+### Why 3 vectors instead of 1
+I kept the model simple but separated signals because job data is messy:
+- **Explicit vector** captures stated requirements (“must have Python”).
+- **Inferred vector** helps when requirements are implied (“data pipelines” implies SQL, ETL, orchestration).
+- **Company vector** adds culture/mission signal without forcing it into skill matching.
+
+**Alternative considered:** a single embedding for everything.
+**Why not:** it tends to blur “skills match” and “values match,” which hurts ranking when users refine by mission/values.
+
+### Why these weights (0.4/0.4/0.2)
+Explicit and inferred are equally weighted to capture both stated and implied requirements.
+Company is lower-weighted so “culture fit” supports ranking but does not dominate core relevance.
+
 ### Explainable Ranking
 Pass `--explain` in the demo to emit a score breakdown per result. This includes:
 - Vector score components
@@ -81,10 +174,10 @@ Pass `--explain` in the demo to emit a score breakdown per result. This includes
 ### Refinement Strategy (`src/context.py`)
 1. Track conversation history and current result pool
 2. For each new query:
-   - Extract structured intent using GPT-4o-mini (role, remote, seniority, etc.)
-   - Apply filters to previous results (don't re-search from scratch)
-   - Re-rank filtered results
-   - Return top-K
+  - Extract structured intent using GPT-4o-mini (role, remote, seniority, etc.)
+  - Apply filters to previous results (don't re-search from scratch)
+  - Re-rank filtered results
+  - Return top-K
 3. Maintains context across turns for smarter filtering
 
 **Why this approach:**
@@ -131,11 +224,11 @@ python .\demo.py --debug-cache --print-cache-keys
 
 ## Measured Performance
 From recent offline FAST_DEMO runs (20k jobs, memmap embeddings):
-- FAST_DEMO load time: 2.67s–2.81s
+- FAST_DEMO load time: 2.40s–2.81s
 - Typical query timings (cache hit):
   - embed: 0.000–0.001s
-  - vector: ~0.047–0.079s
-  - rerank: ~0.005–0.010s
+  - vector: ~0.047–0.079s (e.g., 0.079s)
+  - rerank: ~0.005–0.010s (e.g., 0.007s)
 
 Outlier note: the “warehouse associate” rerank once hit 1.434s; after candidate cap + timing breakdowns, it is now ~0.004s.
 
@@ -185,20 +278,6 @@ Artifacts to inspect:
 - `data/eval_report.md`
 - `data/golden_snapshot.md`
 - `data/trace.jsonl`
-
-## Trade-offs Made
-
-### Optimized For:
-- **Token efficiency** - Stay well under $10 budget
-- **Speed** - Simple architecture, fast iteration
-- **Handling real-world messy data** - Job descriptions are inconsistent
-- **User experience** - Multi-turn conversation feels natural
-
-### Not Optimized For:
-- Perfect ranking algorithms (good enough is better)
-- Comprehensive error handling (this is a demo)
-- Production-grade code quality (it works and it's readable)
-- UI/UX polish (not the focus)
 
 ## Example Queries
 
